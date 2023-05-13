@@ -10,7 +10,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  rxdart: ^0.27.7
   sstream: ^1.0.6
 
 dev_dependencies:

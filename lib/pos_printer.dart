@@ -4,7 +4,7 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:pos_printer/line.dart';
-import 'package:rxdart/rxdart.dart';
+import 'package:sstream/sstream.dart';
 
 import 'bluetooth_printer.dart';
 import 'line_text.dart';
@@ -40,16 +40,15 @@ class BluetoothPrint {
   Future<bool?> get isConnected async =>
       await _channel.invokeMethod('isConnected');
 
-  final BehaviorSubject<bool> _isScanning = BehaviorSubject.seeded(false);
+  final SStream<bool> _isScanning = false.stream;
 
   Stream<bool> get isScanning => _isScanning.stream;
 
-  final BehaviorSubject<List<BluetoothDevice>> _scanResults =
-      BehaviorSubject.seeded([]);
+  final SStream<List<BluetoothDevice>> _scanResults = SStream([]);
 
   Stream<List<BluetoothDevice>> get scanResults => _scanResults.stream;
 
-  final PublishSubject _stopScanPill = PublishSubject();
+  // final PublishSubject _stopScanPill = PublishSubject();
 
   /// Gets the current state of the Bluetooth module
   Stream<int> get state async* {
@@ -68,11 +67,12 @@ class BluetoothPrint {
     // Emit to isScanning
     _isScanning.add(true);
 
-    final killStreams = <Stream>[];
-    killStreams.add(_stopScanPill);
-    if (timeout != null) {
-      killStreams.add(Rx.timer(null, timeout));
-    }
+    // final killStreams = <Stream>[];
+
+    // killStreams.add(_stopScanPill);
+    // if (timeout != null) {
+    //   killStreams.add(Rx.timer(null, timeout));
+    // }
 
     // Clear scan results list
     _scanResults.add(<BluetoothDevice>[]);
@@ -81,7 +81,7 @@ class BluetoothPrint {
       await _channel.invokeMethod('startScan');
     } catch (e) {
       print('Error starting scan.');
-      _stopScanPill.add(null);
+      // _stopScanPill.add(null);
       _isScanning.add(false);
       throw e;
     }
@@ -89,8 +89,6 @@ class BluetoothPrint {
     yield* BluetoothPrint.instance._methodStream
         .where((m) => m.method == "ScanResult")
         .map((m) => m.arguments)
-        .takeUntil(Rx.merge(killStreams))
-        .doOnDone(stopScan)
         .map((map) {
       final device = BluetoothDevice.fromMap(Map<String, dynamic>.from(map));
       final List<BluetoothDevice> list = _scanResults.value;
@@ -121,7 +119,6 @@ class BluetoothPrint {
   /// Stops a scan for Bluetooth Low Energy devices
   Future stopScan() async {
     await _channel.invokeMethod('stopScan');
-    _stopScanPill.add(null);
     _isScanning.add(false);
   }
 
