@@ -44,9 +44,9 @@ class BluetoothPrint {
 
   Stream<bool> get isScanning => _isScanning.stream;
 
-  final SStream<List<BluetoothDevice>> _scanResults = SStream([]);
+  final SStream<List<BluetoothDevice>> scanResults = SStream([]);
 
-  Stream<List<BluetoothDevice>> get scanResults => _scanResults.stream;
+  // Stream<List<BluetoothDevice>> get scanResults => _scanResults.stream;
 
   // final PublishSubject _stopScanPill = PublishSubject();
 
@@ -75,7 +75,7 @@ class BluetoothPrint {
     // }
 
     // Clear scan results list
-    _scanResults.add(<BluetoothDevice>[]);
+    scanResults.add(<BluetoothDevice>[]);
 
     try {
       await _channel.invokeMethod('startScan');
@@ -91,7 +91,7 @@ class BluetoothPrint {
         .map((m) => m.arguments)
         .map((map) {
       final device = BluetoothDevice.fromMap(Map<String, dynamic>.from(map));
-      final List<BluetoothDevice> list = _scanResults.value;
+      final List<BluetoothDevice> list = scanResults.value;
       int newIndex = -1;
       list.asMap().forEach((index, e) {
         if (e.address == device.address) {
@@ -104,7 +104,7 @@ class BluetoothPrint {
       } else {
         list.add(device);
       }
-      _scanResults.add(list);
+      scanResults.add(list);
       return device;
     });
   }
@@ -113,7 +113,7 @@ class BluetoothPrint {
     Duration? timeout,
   }) async {
     await scan(timeout: timeout).drain();
-    return _scanResults.value;
+    return scanResults.value;
   }
 
   /// Stops a scan for Bluetooth Low Energy devices
