@@ -3,6 +3,7 @@ library pos_printer;
 import 'dart:async';
 
 import 'package:flutter/services.dart';
+import 'package:pos_printer/line.dart';
 import 'package:rxdart/rxdart.dart';
 
 import 'bluetooth_printer.dart';
@@ -143,11 +144,11 @@ class BluetoothPrint {
     return Future.value(true);
   }
 
-  Future<dynamic> printLabel(Map<String, dynamic> config, List<LineText> data) {
+  Future<dynamic> printLabel(Map<String, dynamic> config, List<Line> data) {
     Map<String, Object> args = {};
     args['config'] = config;
     args['data'] = data.map((m) {
-      return m.toJson();
+      return m.toMap();
     }).toList();
 
     _channel.invokeMethod('printLabel', args);
