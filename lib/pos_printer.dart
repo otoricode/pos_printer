@@ -2,6 +2,7 @@ library pos_printer;
 
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:pos_printer/line.dart';
 import 'package:sstream/sstream.dart';
@@ -10,12 +11,12 @@ import 'bluetooth_printer.dart';
 import 'line_text.dart';
 
 class BluetoothPrint {
-  static const NAMESPACE = 'pos_printer';
-  static const CONNECTED = 1;
-  static const DISCONNECTED = 0;
+  static const namespace = 'pos_printer';
+  static const connected = 1;
+  static const disconnected = 0;
 
-  static const MethodChannel _channel = MethodChannel('$NAMESPACE/methods');
-  static const EventChannel _stateChannel = EventChannel('$NAMESPACE/state');
+  static const MethodChannel _channel = MethodChannel('$namespace/methods');
+  static const EventChannel _stateChannel = EventChannel('$namespace/state');
 
   Stream<MethodCall> get _methodStream => _methodStreamController.stream;
   final StreamController<MethodCall> _methodStreamController =
@@ -46,10 +47,6 @@ class BluetoothPrint {
 
   final SStream<List<BluetoothDevice>> scanResults = SStream([]);
 
-  // Stream<List<BluetoothDevice>> get scanResults => _scanResults.stream;
-
-  // final PublishSubject _stopScanPill = PublishSubject();
-
   /// Gets the current state of the Bluetooth module
   Stream<int> get state async* {
     yield await _channel.invokeMethod('state').then((s) => s);
@@ -57,36 +54,26 @@ class BluetoothPrint {
     yield* _stateChannel.receiveBroadcastStream().map((s) => s);
   }
 
-  Stream<BluetoothDevice> scan({
-    Duration? timeout,
-  }) async* {
+  Stream<BluetoothDevice> scan() async* {
     if (_isScanning.value == true) {
       throw Exception('Another scan is already in progress.');
     }
 
     // Emit to isScanning
     _isScanning.add(true);
-
-    // final killStreams = <Stream>[];
-
-    // killStreams.add(_stopScanPill);
-    // if (timeout != null) {
-    //   killStreams.add(Rx.timer(null, timeout));
-    // }
-
-    // Clear scan results list
     scanResults.add(<BluetoothDevice>[]);
 
     try {
       await _channel.invokeMethod('startScan');
     } catch (e) {
-      print('Error starting scan.');
-      // _stopScanPill.add(null);
+      if (kDebugMode) {
+        print('Error starting scan.');
+      }
       _isScanning.add(false);
-      throw e;
+      rethrow;
     }
 
-    yield* BluetoothPrint.instance._methodStream
+    yield* _instance._methodStream
         .where((m) => m.method == "ScanResult")
         .map((m) => m.arguments)
         .map((map) {
@@ -112,7 +99,7 @@ class BluetoothPrint {
   Future startScan({
     Duration? timeout,
   }) async {
-    await scan(timeout: timeout).drain();
+    await scan().drain();
     return scanResults.value;
   }
 
