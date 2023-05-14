@@ -24,10 +24,18 @@ public class PrintQRCode {
             int gap = (int)(config.get("gap") == null ? 2 : config.get("gap")); // 单位：mm
             int qty = (int)(config.get("qty") == null ? 1 : config.get("qty")); // 单位：mm
 
-            list.add(DataForSendToPrinterTSC.sizeBymm(width, height));
+            list.add(DataForSendToPrinterTSC.sizeBymm(70, 50));
             list.add(DataForSendToPrinterTSC.gapBymm(gap, 0));
             list.add(DataForSendToPrinterTSC.cls());
             list.add(DataForSendToPrinterTSC.direction(0));
+
+            // list.add(DataForSendToPrinterTSC.sizeBymm(70, 50));
+            // list.add(DataForSendToPrinterTSC.gapBymm(2, 0));
+            // list.add(DataForSendToPrinterTSC.cls());
+            // list.add(DataForSendToPrinterTSC.direction(0));
+            // list.add(DataForSendToPrinterTSC.qrCode(10, 30, "M", 6, "A", 0, "M1", "S3", "123456789"));
+            // list.add(DataForSendToPrinterTSC.text(150, 30, "5", 0, 1, 1, "XXXXXX XXXXXXX"));
+            // list.add(DataForSendToPrinterTSC.print(1));
 
             // {type:'text|barcode|qrcode|image', content:'', x:0,y:0}
             for (Map<String,Object> m: configs) {
@@ -42,7 +50,7 @@ public class PrintQRCode {
                   Log.d(TAG, type);
 
                   // if ("text".equals(type)) {
-                        list.add(DataForSendToPrinterTSC.text(x, y, "0", 1, x_multification, y_multification, content));
+                        list.add(DataForSendToPrinterTSC.text(x, y, "5", 0, x_multification, y_multification, content));
                         Log.d(TAG, x + ", " + y + ", " + font_type + ", " + x_multification + ", " + y_multification +", "+ content );
                   // }
                   // log.d(TAG, "unsupported type: " + type);
@@ -58,7 +66,7 @@ public class PrintQRCode {
                   // }
             }
 
-            list.add(DataForSendToPrinterTSC.print(qty));
+            list.add(DataForSendToPrinterTSC.print(1));
 
             return list;
       }
