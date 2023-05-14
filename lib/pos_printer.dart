@@ -1,33 +1,33 @@
-library pos_printer;
-
 import 'dart:async';
 
 import 'package:flutter/services.dart';
-import 'package:pos_printer/line.dart';
 import 'package:rxdart/rxdart.dart';
 
 import 'bluetooth_printer.dart';
 import 'line_text.dart';
 
 class BluetoothPrint {
-  static const NAMESPACE = 'pos_printer';
-  static const CONNECTED = 1;
-  static const DISCONNECTED = 0;
+  static const String NAMESPACE = 'bluetooth_x_print';
+  static const int CONNECTED = 1;
+  static const int DISCONNECTED = 0;
 
-  static const MethodChannel _channel = MethodChannel('$NAMESPACE/methods');
-  static const EventChannel _stateChannel = EventChannel('$NAMESPACE/state');
+  static const MethodChannel _channel =
+      const MethodChannel('$NAMESPACE/methods');
+  static const EventChannel _stateChannel =
+      const EventChannel('$NAMESPACE/state');
 
   Stream<MethodCall> get _methodStream => _methodStreamController.stream;
   final StreamController<MethodCall> _methodStreamController =
       StreamController.broadcast();
-  factory BluetoothPrint() => _instance;
+
   BluetoothPrint._() {
     _channel.setMethodCallHandler((MethodCall call) async {
       _methodStreamController.add(call);
       return;
     });
   }
-  static final BluetoothPrint _instance = BluetoothPrint._();
+
+  static BluetoothPrint _instance = new BluetoothPrint._();
 
   static BluetoothPrint get instance => _instance;
 
@@ -40,16 +40,16 @@ class BluetoothPrint {
   Future<bool?> get isConnected async =>
       await _channel.invokeMethod('isConnected');
 
-  final BehaviorSubject<bool> _isScanning = BehaviorSubject.seeded(false);
+  BehaviorSubject<bool> _isScanning = BehaviorSubject.seeded(false);
 
   Stream<bool> get isScanning => _isScanning.stream;
 
-  final BehaviorSubject<List<BluetoothDevice>> _scanResults =
+  BehaviorSubject<List<BluetoothDevice>> _scanResults =
       BehaviorSubject.seeded([]);
 
   Stream<List<BluetoothDevice>> get scanResults => _scanResults.stream;
 
-  final PublishSubject _stopScanPill = PublishSubject();
+  PublishSubject _stopScanPill = new PublishSubject();
 
   /// Gets the current state of the Bluetooth module
   Stream<int> get state async* {
@@ -58,6 +58,8 @@ class BluetoothPrint {
     yield* _stateChannel.receiveBroadcastStream().map((s) => s);
   }
 
+  /// Starts a scan for Bluetooth Low Energy devices
+  /// Timeout closes the stream after a specified [Duration]
   Stream<BluetoothDevice> scan({
     Duration? timeout,
   }) async* {
@@ -134,7 +136,7 @@ class BluetoothPrint {
 
   Future<dynamic> printReceipt(
       Map<String, dynamic> config, List<LineText> data) {
-    Map<String, Object> args = {};
+    Map<String, Object> args = Map();
     args['config'] = config;
     args['data'] = data.map((m) {
       return m.toMap();
@@ -144,8 +146,8 @@ class BluetoothPrint {
     return Future.value(true);
   }
 
-  Future<dynamic> printLabel(Map<String, dynamic> config, List<Line> data) {
-    Map<String, Object> args = {};
+  Future<dynamic> printLabel(Map<String, dynamic> config, List<LineText> data) {
+    Map<String, Object> args = Map();
     args['config'] = config;
     args['data'] = data.map((m) {
       return m.toMap();
