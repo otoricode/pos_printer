@@ -37,15 +37,15 @@ public class PrintQRCode {
                   int y = (int)(m.get("y") == null ? 0 : m.get("y"));
                   String font_type = (String) (m.get("font_type") == null ? "TSS24.BF2" : m.get("font_type"));
                   int size = (int)(m.get("size") == null ? 10 : m.get("size"));
-                  
                   int x_multification = (int)(m.get("x_multification") == null ? 1 : m.get("x_multification"));
                   int y_multification = (int)(m.get("y_multification") == null ? 1 : m.get("y_multification"));
-                  
-                  list.add(DataForSendToPrinterTSC.text(x, y, font_type, 0, x_multification, y_multification, content));
+                  Log.d(TAG, type);
 
-                  // if ("text".equals(type)) {
-                  //       list.add(DataForSendToPrinterTSC.text(x, y, font_type, rotation, x_multification, y_multification, content));
-                  //       Log.d(TAG, x + ", " + y + ", " + font_type + ", " + x_multification + ", " + y_multification);
+                  if ("text".equals(type)) {
+                        list.add(DataForSendToPrinterTSC.text(x, y, font_type, 1, x_multification, y_multification, content));
+                        Log.d(TAG, x + ", " + y + ", " + font_type + ", " + x_multification + ", " + y_multification);
+                  }
+                  log.d(TAG, "unsupported type: " + type)
                   // } else if("barcode".equals(type)) {
                   //       list.add(DataForSendToPrinterTSC.barCode(x, y, "128", 100, 1, rotation, 2, 2, content));
                   // } else if("qrcode".equals(type)) {
