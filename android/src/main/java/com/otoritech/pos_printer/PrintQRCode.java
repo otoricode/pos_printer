@@ -41,10 +41,10 @@ public class PrintQRCode {
                   int y_multification = (int)(m.get("y_multification") == null ? 1 : m.get("y_multification"));
                   Log.d(TAG, type);
 
-                  if ("text".equals(type)) {
-                        list.add(DataForSendToPrinterTSC.text(x, y, font_type, 1, x_multification, y_multification, content));
+                  // if ("text".equals(type)) {
+                        list.add(DataForSendToPrinterTSC.text(x, y, "0", 1, x_multification, y_multification, content));
                         Log.d(TAG, x + ", " + y + ", " + font_type + ", " + x_multification + ", " + y_multification);
-                  }
+                  // }
                   // log.d(TAG, "unsupported type: " + type);
                   // } else if("barcode".equals(type)) {
                   //       list.add(DataForSendToPrinterTSC.barCode(x, y, "128", 100, 1, rotation, 2, 2, content));
