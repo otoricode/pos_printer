@@ -128,7 +128,7 @@ class BluetoothPrint {
   }
 
   Future<dynamic> connect(BluetoothDevice device) =>
-      _channel.invokeMethod('connect', device.toJson());
+      _channel.invokeMethod('connect', device.toMap());
 
   Future<dynamic> disconnect() => _channel.invokeMethod('disconnect');
 
