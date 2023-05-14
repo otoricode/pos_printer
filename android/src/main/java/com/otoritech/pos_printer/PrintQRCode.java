@@ -45,7 +45,7 @@ public class PrintQRCode {
                         list.add(DataForSendToPrinterTSC.text(x, y, font_type, 1, x_multification, y_multification, content));
                         Log.d(TAG, x + ", " + y + ", " + font_type + ", " + x_multification + ", " + y_multification);
                   }
-                  log.d(TAG, "unsupported type: " + type)
+                  // log.d(TAG, "unsupported type: " + type);
                   // } else if("barcode".equals(type)) {
                   //       list.add(DataForSendToPrinterTSC.barCode(x, y, "128", 100, 1, rotation, 2, 2, content));
                   // } else if("qrcode".equals(type)) {

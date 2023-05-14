@@ -7,7 +7,7 @@ import 'bluetooth_printer.dart';
 import 'line_text.dart';
 
 class BluetoothPrint {
-  static const String NAMESPACE = 'bluetooth_x_print';
+  static const String NAMESPACE = 'pos_printer';
   static const int CONNECTED = 1;
   static const int DISCONNECTED = 0;
 
