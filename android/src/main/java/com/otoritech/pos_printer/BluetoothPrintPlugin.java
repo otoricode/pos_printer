@@ -359,7 +359,6 @@ public class BluetoothPrintPlugin implements FlutterPlugin, ActivityAware, Metho
         @Override
         public void OnFailed() {
           IS_CONNECT = false;
-          result.success(false);
           result.error("OnFailed", "Cannot connect Device", null);
         }
       });
